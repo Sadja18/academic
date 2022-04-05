@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
+import '../helpers/base_requests.dart';
+
 class LoginScreen extends StatefulWidget {
   static const routeName = "/screen-login";
 
@@ -16,6 +18,24 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final FocusNode _userNameFocus = FocusNode();
   final FocusNode _userPasswordFocus = FocusNode();
+
+  void _onLoginSubmit() async {
+    var userName = usernameController.text;
+    var userPassword = userPasswordController.text;
+
+    var responses = await onlineLoginAttempt(userName, userPassword);
+    var response = responses[0];
+    if (kDebugMode) {
+      print(response.runtimeType);
+    }
+
+    if (response['message'].toLowerCase() == 'success') {
+      if (kDebugMode) {
+        print('login success');
+        print(response['data'].toString());
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -182,7 +202,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 width: MediaQuery.of(context).size.width * 0.40,
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _onLoginSubmit();
+                  },
                   child: const Text(
                     'Submit',
                     style: TextStyle(

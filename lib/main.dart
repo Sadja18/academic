@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import './screens/screen_login.dart';
 import './screens/screen_dashboard.dart';
+import './screens/screen_inspection.dart';
+import './screens/screen_teacher_assessment.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,8 +29,10 @@ class MyApp extends StatelessWidget {
     //     }
     //   },
     // );
-    // return LoginScreen();
-    return DashboardScreen();
+    return LoginScreen();
+    // return DashboardScreen();
+    // return InspectionScreen();
+    // return TeacherTrainingAssessmentScreen();
   }
 
   // This widget is the root of your application.
@@ -49,7 +53,10 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         "/": (ctx) => myWidget(ctx),
-        DashboardScreen.routeName: (ctx)=> DashboardScreen(),
+        DashboardScreen.routeName: (ctx) => DashboardScreen(),
+        InspectionScreen.routeName: (ctx) => InspectionScreen(),
+        TeacherTrainingAssessmentScreen.routeName: (ctx) =>
+            TeacherTrainingAssessmentScreen(),
       },
     );
   }
