@@ -1,6 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
+import '../helpers/base_requests.dart';
+import 'package:intl/intl.dart' show toBeginningOfSentenceCase;
+
+import './screen_dashboard.dart';
 import '../helpers/base_requests.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -21,18 +27,90 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool _isObscure = true;
 
+  Future<void> _showAlertBox(String title, String message, context) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext ctx) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Re-enter'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showSuccess(context) {
+    const message = "Login success.\nTap okay to go to Dashboard.";
+    return showDialog(
+      context: context,
+      builder: (BuildContext ctx) => AlertDialog(
+        title: const Text('Successful login'),
+        content: const Text(message),
+        actions: [
+          TextButton(
+              onPressed: () {
+                Navigator.of(context).restorablePushNamedAndRemoveUntil(
+                    DashboardScreen.routeName, (route) => false);
+              },
+              child: const Text('Okay'))
+        ],
+      ),
+    );
+  }
+
   void _onLoginSubmit() async {
     var userName = usernameController.text;
     var userPassword = userPasswordController.text;
 
     var response = await onlineLoginAttempt(userName, userPassword);
-    if (kDebugMode) {
-      print(response.runtimeType);
-    }
 
-    if (response['message'].toLowerCase() != 'success') {
-      // login error
-      // show alert box about this.
+    if (response != null) {
+      if (response.isEmpty) {
+      } else {
+        if (response['message'].toLowerCase() != 'success') {
+          // login error
+          String title = "";
+          String message = "";
+
+          if (response['message'] != null) {
+            title = toBeginningOfSentenceCase(response['message'].toString())!;
+            if (response['data'] != null) {
+              message = toBeginningOfSentenceCase(response['data'].toString())!;
+            } else if (response['error'] != null) {
+              message =
+                  toBeginningOfSentenceCase(response['error'].toString())!;
+            } else {
+              message = "Internal Server Error.\nPlease try after some time";
+            }
+          } else {
+            title = "Login Error";
+            message = "Internal Server Error.\nPlease try after some time";
+          }
+          _showAlertBox(title, message, context);
+          // show alert box about this.
+        } else {
+          
+          if (response['message'].toLowerCase() == 'success' &&
+              response['data'] != null) {
+           
+            // login was success
+            // first save the entry to db
+            insertNewUser(response['data']);
+            // redirect to dashboard
+            _showSuccess(context);
+          }
+        }
+      }
+    } else {
+      if (kDebugMode) {
+        log('offline mode');
+      }
     }
 
     // if (response['message'].toLowerCase() == 'success') {
@@ -178,7 +256,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           suffixIcon: Container(
                             width: MediaQuery.of(context).size.width * 0.05,
                             height: MediaQuery.of(context).size.height * 0.002,
-                           
                             alignment: Alignment.centerRight,
                             padding: const EdgeInsets.all(0.1),
                             decoration: BoxDecoration(

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+
+import './screen_login.dart';
 import './screen_inspection.dart';
 import './screen_teacher_assessment.dart';
+import '../helpers/base_requests.dart';
 
 class DashboardScreen extends StatefulWidget {
   static const routeName = '/screen-dashboard';
@@ -13,6 +16,35 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   var scaffoldKey = GlobalKey<ScaffoldState>();
+
+  Widget widgetUserName() {
+    return FutureBuilder(
+      future: getUserName(),
+      builder: (BuildContext ctx, AsyncSnapshot snapshot) {
+        if (snapshot.hasError) {
+          return const Text("");
+        }
+        if (snapshot.hasData) {
+          if (snapshot.data != null) {
+            var userName = snapshot.data;
+            return Text(
+              userName,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            );
+          }
+        }
+        return const Text("");
+      },
+    );
+  }
+
+  void logOutButtonOnClick() async {
+    await logUserOut();
+    Navigator.of(context)
+        .pushNamedAndRemoveUntil(LoginScreen.routeName, (route) => false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,8 +128,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       color: Colors.deepPurpleAccent.shade100,
                       border: Border.all(),
                       borderRadius: BorderRadius.circular(10.0)),
-                  child: const ListTile(
-                    title: Text('User Name'),
+                  child: ListTile(
+                    title: Center(child: widgetUserName()),
                     tileColor: Colors.transparent,
                   ),
                 ),
@@ -126,6 +158,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     child: OutlinedButton(
                       onPressed: () {
                         // _onLogout();
+                        logOutButtonOnClick();
                       },
                       child: const Text('Logout'),
                     ),

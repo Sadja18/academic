@@ -1,10 +1,12 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import './screens/screen_login.dart';
 import './screens/screen_dashboard.dart';
 import './screens/screen_inspection.dart';
 import './screens/screen_teacher_assessment.dart';
+import './helpers/base_requests.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,25 +16,23 @@ class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
   Widget myWidget(BuildContext context) {
-    // return FutureBuilder(
-    //   future: loginOrDashboard(),
-    //   builder: (BuildContext context, AsyncSnapshot snapshot) {
-    //     // return const Text('');
-    //     if (snapshot.hasData) {
-    //       if (snapshot.data == 'login') {
-    //         return LoginScreen();
-    //       } else {
-    //         return DashboardScreen();
-    //       }
-    //     } else {
-    //       return const Text('');
-    //     }
-    //   },
-    // );
-    return LoginScreen();
-    // return DashboardScreen();
-    // return InspectionScreen();
-    // return TeacherTrainingAssessmentScreen();
+    return FutureBuilder(
+      future: isLoggedIn(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        // return const Text('');
+        if (snapshot.hasData) {
+          if (snapshot.data == 0) {
+            return LoginScreen();
+          } else if (snapshot.data == 1) {
+            return DashboardScreen();
+          } else {
+            return LoginScreen();
+          }
+        } else {
+          return const Text('');
+        }
+      },
+    );
   }
 
   // This widget is the root of your application.
@@ -53,6 +53,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         "/": (ctx) => myWidget(ctx),
+        LoginScreen.routeName: (ctx) => LoginScreen(),
         DashboardScreen.routeName: (ctx) => DashboardScreen(),
         InspectionScreen.routeName: (ctx) => InspectionScreen(),
         TeacherTrainingAssessmentScreen.routeName: (ctx) =>
