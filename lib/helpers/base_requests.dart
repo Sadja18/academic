@@ -13,6 +13,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/uri_paths.dart';
+import '../services/login_format_validator.dart';
 
 Future<dynamic> onlineLoginAttempt(String userName, String userPassword) async {
   try {
@@ -20,23 +21,41 @@ Future<dynamic> onlineLoginAttempt(String userName, String userPassword) async {
         userName != "" &&
         userPassword.isNotEmpty &&
         userPassword != "") {
-      Map<String, String> requestBody = {
-        "userName": userName,
-        "userPassword": userPassword,
-      };
+      // check if the user name is of the valid email format
+      var format = loginCredentialsValidation(userName, userPassword);
 
-      var response = await http.post(
-        Uri.parse('$baseURL$login'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(requestBody),
-      );
+      if (format == "valid") {
+        // if user name is email
+        // send http request to try to login
+        Map<String, String> requestBody = {
+          "userName": userName,
+          "userPassword": userPassword,
+        };
 
-      if(kDebugMode){
-        log(response.toString());
+        var response = await http.post(
+          Uri.parse('$baseURL$login'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(requestBody),
+        );
+
+        if (kDebugMode) {
+          log(response.body.toString());
+          log(response.statusCode.toString());
+        }
+
+        if(response.statusCode==200){
+          var respBody = response.body;
+
+          return respBody;
+
+        }else{
+          return {};
+        }
+      } else {
+        return {};
       }
-      return response;
     } else {
       return {};
     }

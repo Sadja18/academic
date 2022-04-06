@@ -19,6 +19,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final FocusNode _userNameFocus = FocusNode();
   final FocusNode _userPasswordFocus = FocusNode();
 
+  bool _isObscure = true;
+
   void _onLoginSubmit() async {
     var userName = usernameController.text;
     var userPassword = userPasswordController.text;
@@ -28,12 +30,17 @@ class _LoginScreenState extends State<LoginScreen> {
       print(response.runtimeType);
     }
 
-    if (response['message'].toLowerCase() == 'success') {
-      if (kDebugMode) {
-        print('login success');
-        print(response['data'].toString());
-      }
+    if (response['message'].toLowerCase() != 'success') {
+      // login error
+      // show alert box about this.
     }
+
+    // if (response['message'].toLowerCase() == 'success') {
+    //   if (kDebugMode) {
+    //     print('login success');
+    //     print(response['data'].toString());
+    //   }
+    // }
   }
 
   @override
@@ -168,6 +175,32 @@ class _LoginScreenState extends State<LoginScreen> {
                             width: MediaQuery.of(context).size.width * 0.90,
                           ),
                           // hintText: 'User Name',
+                          suffixIcon: Container(
+                            width: MediaQuery.of(context).size.width * 0.05,
+                            height: MediaQuery.of(context).size.height * 0.002,
+                           
+                            alignment: Alignment.centerRight,
+                            padding: const EdgeInsets.all(0.1),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.purpleAccent.shade100,
+                              ),
+                              borderRadius: BorderRadius.circular(5.0),
+                              color: const Color.fromARGB(127, 232, 11, 209),
+                            ),
+                            child: IconButton(
+                              color: Colors.white,
+                              onPressed: () {
+                                setState(() {
+                                  _isObscure = !_isObscure;
+                                });
+                              },
+                              icon: Icon(_isObscure
+                                  ? Icons.visibility
+                                  : Icons.visibility_off),
+                            ),
+                          ),
+
                           contentPadding: const EdgeInsets.only(
                             left: 15,
                             bottom: 11,
@@ -176,6 +209,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         controller: userPasswordController,
+                        obscureText: _isObscure,
                         autofocus: false,
                         focusNode: _userPasswordFocus,
                         onEditingComplete: () {
