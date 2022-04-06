@@ -1,9 +1,12 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
 import './screen_login.dart';
 import './screen_inspection.dart';
 import './screen_teacher_assessment.dart';
+import '../widgets/academic_download_data.dart';
 import '../helpers/base_requests.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -44,6 +47,170 @@ class _DashboardScreenState extends State<DashboardScreen> {
     await logUserOut();
     Navigator.of(context)
         .pushNamedAndRemoveUntil(LoginScreen.routeName, (route) => false);
+  }
+
+  Widget downloadTabWidget() {
+    return FutureBuilder(
+      future: userType(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasError) {
+          return const Text('Internal Server Error');
+        }
+        if (snapshot.hasData) {
+          if (snapshot.data != null) {
+            if (snapshot.data == 1) {
+              return AcademicDownloadBase();
+            } else if (snapshot.data == 0) {
+              return const Text('Download for DIET');
+            } else {
+              return const Text('');
+            }
+          }
+        }
+        return const Text("");
+      },
+    );
+  }
+
+  Widget activityTabWidget() {
+    return FutureBuilder(
+      future: userType(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasError) {
+          return const Text('Internal Server Error');
+        }
+        if (snapshot.hasData) {
+          if (snapshot.data != null) {
+            if (snapshot.data == 1) {
+              return Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                decoration: BoxDecoration(
+                  border: Border.all(),
+                ),
+                alignment: Alignment.center,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 8.0),
+                      width: MediaQuery.of(context).size.width * 0.80,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.green,
+                        ),
+                      ),
+                      height: MediaQuery.of(context).size.height * 0.30,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.of(context)
+                              .pushNamed(InspectionScreen.routeName);
+                        },
+                        child: SizedBox(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width * 0.50,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.20,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.blue,
+                                    width: 2.0,
+                                  ),
+                                ),
+                                margin: const EdgeInsets.symmetric(
+                                  vertical: 8.0,
+                                ),
+                                child: Image.asset(
+                                    'assets/dashboardIcons/assessment.png'),
+                              ),
+                              Container(
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.red,
+                                    width: 2.0,
+                                  ),
+                                ),
+                                width: MediaQuery.of(context).size.width * 0.50,
+                                // height: MediaQuery.of(context).size.height * 0.20,
+                                child: const Text('Inspection'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 8.0),
+                      width: MediaQuery.of(context).size.width * 0.80,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.green,
+                        ),
+                      ),
+                      height: MediaQuery.of(context).size.height * 0.30,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pushNamed(
+                              TeacherTrainingAssessmentScreen.routeName);
+                        },
+                        child: SizedBox(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width * 0.50,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.20,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.blue,
+                                    width: 2.0,
+                                  ),
+                                ),
+                                margin: const EdgeInsets.symmetric(
+                                  vertical: 8.0,
+                                ),
+                                child: Image.asset(
+                                    'assets/dashboardIcons/leave.png'),
+                              ),
+                              Container(
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.red,
+                                    width: 2.0,
+                                  ),
+                                ),
+                                width: MediaQuery.of(context).size.width * 0.50,
+                                // height: MediaQuery.of(context).size.height * 0.20,
+                                child: const Text('Assessment'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            } else if (snapshot.data == 0) {
+              return Container(
+                decoration: BoxDecoration(border: Border.all()),
+                child: const Text('DIET Activity'),
+              );
+            } else {
+              return const Text('');
+            }
+          }
+        }
+        return const Text('');
+      },
+    );
   }
 
   @override
@@ -176,122 +343,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
               decoration: BoxDecoration(
                 border: Border.all(),
               ),
-              child: const Text('Download'),
+              child: downloadTabWidget(),
             ),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              decoration: BoxDecoration(
-                border: Border.all(),
-              ),
-              alignment: Alignment.center,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 8.0),
-                    width: MediaQuery.of(context).size.width * 0.80,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.green,
-                      ),
-                    ),
-                    height: MediaQuery.of(context).size.height * 0.30,
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.of(context)
-                            .pushNamed(InspectionScreen.routeName);
-                      },
-                      child: SizedBox(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.50,
-                              height: MediaQuery.of(context).size.height * 0.20,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.blue,
-                                  width: 2.0,
-                                ),
-                              ),
-                              margin: const EdgeInsets.symmetric(
-                                vertical: 8.0,
-                              ),
-                              child: Image.asset(
-                                  'assets/dashboardIcons/assessment.png'),
-                            ),
-                            Container(
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.red,
-                                  width: 2.0,
-                                ),
-                              ),
-                              width: MediaQuery.of(context).size.width * 0.50,
-                              // height: MediaQuery.of(context).size.height * 0.20,
-                              child: const Text('Inspection'),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 8.0),
-                    width: MediaQuery.of(context).size.width * 0.80,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.green,
-                      ),
-                    ),
-                    height: MediaQuery.of(context).size.height * 0.30,
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pushNamed(
-                            TeacherTrainingAssessmentScreen.routeName);
-                      },
-                      child: SizedBox(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.50,
-                              height: MediaQuery.of(context).size.height * 0.20,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.blue,
-                                  width: 2.0,
-                                ),
-                              ),
-                              margin: const EdgeInsets.symmetric(
-                                vertical: 8.0,
-                              ),
-                              child: Image.asset(
-                                  'assets/dashboardIcons/leave.png'),
-                            ),
-                            Container(
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.red,
-                                  width: 2.0,
-                                ),
-                              ),
-                              width: MediaQuery.of(context).size.width * 0.50,
-                              // height: MediaQuery.of(context).size.height * 0.20,
-                              child: const Text('Assessment'),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            activityTabWidget(),
           ],
         ),
       ),

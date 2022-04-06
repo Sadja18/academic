@@ -79,7 +79,9 @@ Future<void> insertNewUser(Map<String, dynamic> data) async {
 
     await DBProvider.db.dynamicInsert('user', data);
   } catch (e) {
-    log(e.toString());
+    if (kDebugMode) {
+      log(e.toString());
+    }
   }
 }
 
@@ -101,7 +103,9 @@ Future<dynamic> isLoggedIn() async {
       return 0;
     }
   } catch (e) {
-    log(e.toString());
+    if (kDebugMode) {
+      log(e.toString());
+    }
   }
 }
 
@@ -109,7 +113,9 @@ Future<void> logUserOut() async {
   try {
     await DBProvider.db.makeuserLoggedOut();
   } catch (e) {
-    log(e.toString());
+    if (kDebugMode) {
+      log(e.toString());
+    }
   }
 }
 
@@ -130,6 +136,28 @@ Future<dynamic> getUserName() async {
       return "";
     }
   } catch (e) {
-    log(e.toString());
+    if (kDebugMode) {
+      log(e.toString());
+    }
+  }
+}
+
+Future<dynamic> userType() async {
+  try {
+    var customQuery = 'SELECT academicUserGroup FROM user WHERE loginStatus=1;';
+    var params = [];
+
+    var results = await DBProvider.db.dynamicRead(customQuery, params);
+    if (results.length == 1) {
+      var result = results[0];
+
+      return result['academicUserGroup'];
+    } else {
+      return -1;
+    }
+  } catch (e) {
+    if (kDebugMode) {
+      log(e.toString());
+    }
   }
 }
