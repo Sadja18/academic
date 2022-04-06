@@ -23,8 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
     var userName = usernameController.text;
     var userPassword = userPasswordController.text;
 
-    var responses = await onlineLoginAttempt(userName, userPassword);
-    var response = responses[0];
+    var response = await onlineLoginAttempt(userName, userPassword);
     if (kDebugMode) {
       print(response.runtimeType);
     }
