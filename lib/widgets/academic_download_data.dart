@@ -62,6 +62,39 @@ class _AcademicDownloadBaseState extends State<AcademicDownloadBase> {
     });
   }
 
+  Future<void> _showAlertBox(String title, String message, context) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext ctx) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Okay'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void downloadButtonOnclick() async {
+    var res = await getAllSchoolsAndTeachers(
+        selectedDistrict['id'], selectedCluster['id']);
+    String title = "";
+    String message = "";
+    if (res == 'ok') {
+      title = "Success";
+      message = "All records fetched successfully";
+    } else {
+      title = "Failure";
+      message = "All records cannot be fetched successfully";
+    }
+    _showAlertBox(title, message, context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -235,9 +268,7 @@ class _AcademicDownloadBaseState extends State<AcademicDownloadBase> {
                               ),
                               child: TextButton(
                                 onPressed: () {
-                                  getAllSchoolsAndTeachers(
-                                      selectedDistrict['id'],
-                                      selectedCluster['id']);
+                                  downloadButtonOnclick();
                                 },
                                 child: const Text(
                                   'Download',

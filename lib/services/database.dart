@@ -26,6 +26,35 @@ class DBProvider {
         'UNIQUE(sessionId)'
         ');';
   }
+  String _createSchoolTable(){
+    return "CREATE  TABLE School("
+    "schoolId INTEGER NOT NULL,"
+    "schoolName TEXT NOT NULL,"
+    "schoolCode TEXT,"
+    "schoolClusterId INTEGER,"
+    "schoolClusterName TEXT NOT NULL,"
+    "schoolBlockId INTEGER NOT NULL,"
+    "schoolBlockName TEXT NOT NULL,"
+    "UNIQUE(schoolId)"
+    ");";
+  }
+
+  String _createTeacherTable(){
+    return "CREATE TABLE Teacher("
+    "teacherId INTEGER NOT NULL,"
+    "teacherName TEXT NOT NULL,"
+    "employeeId TEXT NOT NULL,"
+    "standardId TEXT NOT NULL,"
+    "standardName TEXT NOT NULL,"
+    "schoolId INTEGER NOT NULL,"
+    "schoolName TEXT NOT NULL,"
+    "teacherClusterId INTEGER NOT NULL,"
+    "teacherClusterName INTEGER NOT NULL,"
+    "teacherBlockId INTEGER NOT NULL,"
+    "teacherBlockName INTEGER NOT NULL,"
+    "UNIQUE(teacherId)"
+    ");";
+  }
 
   Future initDB() async {
     String path = join(await getDatabasesPath(), dbname);
@@ -45,6 +74,8 @@ class DBProvider {
           ');');
 
       batch.execute(_createAcademicSessionTable());
+      batch.execute(_createSchoolTable());
+      batch.execute(_createTeacherTable());
 
       await batch.commit(noResult: true);
     }, onUpgrade: (Database db, currentVersion, nextVersion) async {});

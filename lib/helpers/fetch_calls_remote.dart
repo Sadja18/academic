@@ -135,9 +135,9 @@ Future<dynamic> fetchClustersInDistrict(districtId) async {
   }
 }
 
-Future<void> getAllSchoolsAndTeachers(districtId, clusterId) async {
+Future<dynamic> getAllSchoolsAndTeachers(districtId, clusterId) async {
   try {
-    if(kDebugMode){
+    if (kDebugMode) {
       print("sending request to download stuff");
     }
     var customQueryCredential =
@@ -146,6 +146,7 @@ Future<void> getAllSchoolsAndTeachers(districtId, clusterId) async {
 
     var credentials =
         await DBProvider.db.dynamicRead(customQueryCredential, params);
+    int flag = 0;
 
     if (credentials.isNotEmpty) {
       var credential = credentials[0];
@@ -173,13 +174,50 @@ Future<void> getAllSchoolsAndTeachers(districtId, clusterId) async {
 
           if (resp['message'] != null && resp['message'] == 'success') {
             if (resp['data'] != null && resp['data'].isNotEmpty) {
-              if (kDebugMode) {
-                log(resp['data'].toString());
+              if (resp['data'] is Map &&
+                  resp['data']['schools'] != null &&
+                  resp['data']['teachers'] != null) {
+                if (resp['data']['schools'] is List &&
+                    resp['data']['schools'].length > 0) {
+                  var schools = resp['data']['schools'];
+
+                  for (var i = 0; i < schools.length; i++) {
+                    var school = schools[i];
+                    if (kDebugMode) {
+                      print(school.toString());
+                    }
+                    Map<String, Object> entry = {
+                      "schoolId": school['id'],
+                      "schoolName": school['com_name'].toString(),
+                      'schoolCode': school['code'],
+                      'schoolClusterId': school['cluster'][0],
+                      'schoolClusterName': school['cluster'][1].toString(),
+                      'schoolBlockId': school['block'][0],
+                      'schoolBlockName': school['block'][1].toString(),
+                    };
+
+                    await DBProvider.db.dynamicInsert('School', entry);
+                  }
+                } else {
+                  flag = 1;
+                }
+                if (resp['data']['teachers'] is List &&
+                    resp['data']['teachers'].length > 0) {
+                } else {
+                  flag = 1;
+                }
               }
             }
           }
         }
       }
+    } else {
+      flag = 1;
+    }
+    if (flag == 0) {
+      return 'ok';
+    } else {
+      return 'not ok';
     }
   } catch (e) {
     if (kDebugMode) {
