@@ -79,18 +79,15 @@ class _AcademicDownloadBaseState extends State<AcademicDownloadBase> {
                   Container(
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: Colors.red,
+                        
                       ),
-                      color: Colors.yellow,
+                      color: Colors.white70,
                     ),
                     width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height * 0.12,
+                    height: MediaQuery.of(context).size.height * 0.14,
                     margin: const EdgeInsets.symmetric(
                       vertical: 6.0,
                       horizontal: 6.0,
-                    ),
-                    padding: const EdgeInsets.only(
-                      bottom: 5.0,
                     ),
                     child: Row(
                       children: [
@@ -123,8 +120,15 @@ class _AcademicDownloadBaseState extends State<AcademicDownloadBase> {
                                       decoration: BoxDecoration(
                                         border: Border.all(),
                                       ),
+                                      padding: const EdgeInsets.all(
+                                        6.0,
+                                      ),
                                       child: Text(
                                         selectedDistrict['name'],
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
                                       ),
                                     )
                                   : const Text(""),
@@ -138,9 +142,9 @@ class _AcademicDownloadBaseState extends State<AcademicDownloadBase> {
                       ? Container(
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: Colors.red,
+                             
                             ),
-                            color: Colors.yellow,
+                            color: Colors.white70,
                           ),
                           width: MediaQuery.of(context).size.width,
                           height: MediaQuery.of(context).size.height * 0.14,
@@ -183,8 +187,15 @@ class _AcademicDownloadBaseState extends State<AcademicDownloadBase> {
                                             decoration: BoxDecoration(
                                               border: Border.all(),
                                             ),
+                                            padding: const EdgeInsets.all(
+                                              6.0,
+                                            ),
                                             child: Text(
                                               selectedCluster['name'],
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                              ),
                                             ),
                                           )
                                         : const Text(""),
@@ -215,7 +226,9 @@ class _AcademicDownloadBaseState extends State<AcademicDownloadBase> {
                       horizontal: 6.0,
                     ),
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        getAllSchoolsAndTeachers(selectedDistrict['id'], selectedCluster['id']);
+                      },
                       child: const Text(
                         'Download',
                         style: TextStyle(

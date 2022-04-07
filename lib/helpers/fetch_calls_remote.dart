@@ -134,3 +134,51 @@ Future<dynamic> fetchClustersInDistrict(districtId) async{
     }
   }
 }
+
+Future<void> getAllSchoolsAndTeachers(districtId, clusterId)async{
+  try {
+     var customQueryCredential =
+        "SELECT userName, userPassword FROM user WHERE loginStatus = 1;";
+    var params = [];
+
+    var credentials =
+        await DBProvider.db.dynamicRead(customQueryCredential, params);
+
+    if (credentials.isNotEmpty) {
+      var credential = credentials[0];
+
+      var userName = credential['userName'];
+      var userPassword = credential['userPassword'];
+
+      Map<String, dynamic> requestBody = {
+        "userName": userName,
+        "userPassword": userPassword,
+        "districtId": districtId,
+        'clusterId': clusterId
+      };
+      var response = await http.post(
+        Uri.parse('$baseURL'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(requestBody),
+      );
+
+      if (response.statusCode == 200) {
+        if (response.body != "") {
+          var resp = jsonDecode(response.body);
+
+          if (resp['message'] != null && resp['message'] == 'success') {
+            if (resp['data'] != null && resp['data'].isNotEmpty) {
+              
+            }
+          }
+        }
+      }
+    }
+  } catch (e) {
+    if(kDebugMode){
+      log(e.toString());
+    }
+  }
+}
