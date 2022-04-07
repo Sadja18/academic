@@ -190,10 +190,17 @@ Future<dynamic> getAllSchoolsAndTeachers(districtId, clusterId) async {
                       "schoolId": school['id'],
                       "schoolName": school['com_name'].toString(),
                       'schoolCode': school['code'],
-                      'schoolClusterId': school['cluster'][0],
-                      'schoolClusterName': school['cluster'][1].toString(),
-                      'schoolBlockId': school['block'][0],
-                      'schoolBlockName': school['block'][1].toString(),
+                      'schoolClusterId': (school['cluster'] is bool)
+                          ? ""
+                          : school['cluster'][0],
+                      'schoolClusterName': (school['cluster'] is bool)
+                          ? ""
+                          : school['cluster'][1].toString(),
+                      'schoolBlockId':
+                          (school['block'] is bool) ? "" : school['block'][0],
+                      'schoolBlockName': (school['block'] is bool)
+                          ? ""
+                          : school['block'][1].toString(),
                     };
 
                     await DBProvider.db.dynamicInsert('School', entry);
@@ -203,6 +210,42 @@ Future<dynamic> getAllSchoolsAndTeachers(districtId, clusterId) async {
                 }
                 if (resp['data']['teachers'] is List &&
                     resp['data']['teachers'].length > 0) {
+                  var teachers = resp['data']['teachers'];
+
+                  for (var i = 0; i < teachers.length; i++) {
+                    var teacher = teachers[i];
+
+                    if (kDebugMode) {
+                      print(teacher.toString());
+                    }
+
+                    Map<String, Object> data = {};
+
+                    data['teacherId'] = teacher['id'];
+                    data['employeeId'] = teacher['employee_id'][0];
+                    data['standardId'] = (teacher['standard_id'] is bool)
+                        ? ""
+                        : teacher['standard_id'][0];
+                    data['standardName'] = (teacher['standard_id'] is bool)
+                        ? ""
+                        : teacher['standard_id'][1].toString();
+                    data['teacherName'] = teacher['employee_id'][1].toString();
+                    data['schoolId'] = teacher['school_id'][0];
+                    data['schoolName'] = teacher['school_id'][1].toString();
+                    data['teacherBlockId'] =
+                        (teacher['block'] is bool) ? "" : teacher['block'][0];
+                    data['teacherBlockName'] = (teacher['block'] is bool)
+                        ? ""
+                        : teacher['block'][1].toString();
+                    data['teacherClusterId'] = (teacher['cluster'] is bool)
+                        ? ""
+                        : teacher['cluster'][0];
+                    data['teacherClusterName'] = (teacher['cluster'] is bool)
+                        ? ""
+                        : teacher['cluster'][1].toString();
+
+                    await DBProvider.db.dynamicInsert('Teacher', data);
+                  }
                 } else {
                   flag = 1;
                 }

@@ -83,16 +83,16 @@ class _AcademicDownloadBaseState extends State<AcademicDownloadBase> {
   void downloadButtonOnclick() async {
     var res = await getAllSchoolsAndTeachers(
         selectedDistrict['id'], selectedCluster['id']);
-    String title = "";
-    String message = "";
-    if (res == 'ok') {
-      title = "Success";
-      message = "All records fetched successfully";
-    } else {
-      title = "Failure";
-      message = "All records cannot be fetched successfully";
-    }
-    _showAlertBox(title, message, context);
+    // String title = "";
+    // String message = "";
+    // if (res == 'ok') {
+    //   title = "Success";
+    //   message = "All records fetched successfully";
+    // } else {
+    //   title = "Failure";
+    //   message = "All records cannot be fetched successfully";
+    // }
+    // _showAlertBox(title, message, context);
   }
 
   @override

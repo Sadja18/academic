@@ -32,9 +32,9 @@ class DBProvider {
     "schoolName TEXT NOT NULL,"
     "schoolCode TEXT,"
     "schoolClusterId INTEGER,"
-    "schoolClusterName TEXT NOT NULL,"
-    "schoolBlockId INTEGER NOT NULL,"
-    "schoolBlockName TEXT NOT NULL,"
+    "schoolClusterName TEXT,"
+    "schoolBlockId INTEGER,"
+    "schoolBlockName TEXT,"
     "UNIQUE(schoolId)"
     ");";
   }
@@ -44,8 +44,8 @@ class DBProvider {
     "teacherId INTEGER NOT NULL,"
     "teacherName TEXT NOT NULL,"
     "employeeId TEXT NOT NULL,"
-    "standardId TEXT NOT NULL,"
-    "standardName TEXT NOT NULL,"
+    "standardId TEXT,"
+    "standardName TEXT,"
     "schoolId INTEGER NOT NULL,"
     "schoolName TEXT NOT NULL,"
     "teacherClusterId INTEGER NOT NULL,"
