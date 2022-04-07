@@ -1,11 +1,14 @@
 // ignore_for_file: unused_import, unnecessary_import
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import '../helpers/base_requests.dart';
 import '../helpers/fetch_calls_remote.dart';
 
 import './common/selector_district_dropdown.dart';
+import './common/selector_cluster_dropdown.dart';
 
 class AcademicDownloadBase extends StatefulWidget {
   const AcademicDownloadBase({Key? key}) : super(key: key);
@@ -17,7 +20,10 @@ class AcademicDownloadBase extends StatefulWidget {
 class _AcademicDownloadBaseState extends State<AcademicDownloadBase> {
   int initiate = 0;
   var _districtsData = [];
+  var _clusterData = [];
+
   Map<String, dynamic> selectedDistrict = {};
+  Map<String, dynamic> selectedCluster = {};
 
   void onInitiated() async {
     var result = await fetchDistrictsFromRemote();
@@ -28,9 +34,29 @@ class _AcademicDownloadBaseState extends State<AcademicDownloadBase> {
     });
   }
 
+  void fetchClusters() async {
+    var clusters = await fetchClustersInDistrict(selectedDistrict['id']);
+    setState(() {
+      _clusterData = clusters;
+    });
+  }
+
   void districtSelector(Map<String, dynamic>? selection) {
+    if (kDebugMode) {
+      print(selection.toString());
+    }
     setState(() {
       selectedDistrict = selection!;
+    });
+    fetchClusters();
+  }
+
+  void clusterSelector(Map<String, dynamic>? selection) {
+    if (kDebugMode) {
+      print(selection.toString());
+    }
+    setState(() {
+      selectedCluster = selection!;
     });
   }
 
@@ -72,7 +98,7 @@ class _AcademicDownloadBaseState extends State<AcademicDownloadBase> {
                           alignment: Alignment.center,
                           decoration: BoxDecoration(border: Border.all()),
                           width: MediaQuery.of(context).size.width * 0.25,
-                          height: MediaQuery.of(context).size.height * 0.12,
+                          height: MediaQuery.of(context).size.height * 0.14,
                           child: const Text(
                             'District',
                             style: TextStyle(
@@ -84,7 +110,7 @@ class _AcademicDownloadBaseState extends State<AcademicDownloadBase> {
                         Container(
                           decoration: BoxDecoration(border: Border.all()),
                           width: MediaQuery.of(context).size.width * 0.70,
-                          height: MediaQuery.of(context).size.height * 0.12,
+                          height: MediaQuery.of(context).size.height * 0.14,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -108,46 +134,67 @@ class _AcademicDownloadBaseState extends State<AcademicDownloadBase> {
                       ],
                     ),
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.red,
-                      ),
-                      color: Colors.yellow,
-                    ),
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height * 0.08,
-                    margin: const EdgeInsets.symmetric(
-                      vertical: 6.0,
-                      horizontal: 6.0,
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(border: Border.all()),
-                          width: MediaQuery.of(context).size.width * 0.25,
-                          height: MediaQuery.of(context).size.height * 0.08,
-                          child: const Text(
-                            'Cluster',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
+                  (selectedDistrict.isNotEmpty)
+                      ? Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.red,
                             ),
+                            color: Colors.yellow,
                           ),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(border: Border.all()),
-                          width: MediaQuery.of(context).size.width * 0.70,
-                          height: MediaQuery.of(context).size.height * 0.08,
-                          child: OutlinedButton(
-                            onPressed: () {},
-                            child: const Text('Clusters Dropdown'),
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height * 0.14,
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 6.0,
+                            horizontal: 6.0,
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(border: Border.all()),
+                                width: MediaQuery.of(context).size.width * 0.25,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.14,
+                                child: const Text(
+                                  'Cluster',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                decoration: BoxDecoration(border: Border.all()),
+                                width: MediaQuery.of(context).size.width * 0.70,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.14,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      child: ClusterDropdown(
+                                        clusters: _clusterData,
+                                        clusterSelector: clusterSelector,
+                                      ),
+                                    ),
+                                    (selectedCluster.isNotEmpty)
+                                        ? Container(
+                                            decoration: BoxDecoration(
+                                              border: Border.all(),
+                                            ),
+                                            child: Text(
+                                              selectedCluster['name'],
+                                            ),
+                                          )
+                                        : const Text(""),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         )
-                      ],
-                    ),
-                  ),
+                      : const Text(""),
                   Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(6.0),
