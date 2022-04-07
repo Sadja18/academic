@@ -53,7 +53,7 @@ Future<dynamic> fetchDistrictsFromRemote() async {
 
               if (academicYearData != null) {
                 // save to db
-                
+
                 Map<String, Object> data = {
                   "sessionId": academicYearData['id'],
                   "sessionName": academicYearData['name'],
@@ -68,7 +68,7 @@ Future<dynamic> fetchDistrictsFromRemote() async {
 
               if (districtData != null && districtData.length > 0) {
                 // return to academic_download_data.dart
-               
+
                 return districtData;
               }
             }
@@ -83,7 +83,7 @@ Future<dynamic> fetchDistrictsFromRemote() async {
   }
 }
 
-Future<dynamic> fetchClustersInDistrict(districtId) async{
+Future<dynamic> fetchClustersInDistrict(districtId) async {
   try {
     var customQueryCredential =
         "SELECT userName, userPassword FROM user WHERE loginStatus = 1;";
@@ -135,9 +135,12 @@ Future<dynamic> fetchClustersInDistrict(districtId) async{
   }
 }
 
-Future<void> getAllSchoolsAndTeachers(districtId, clusterId)async{
+Future<void> getAllSchoolsAndTeachers(districtId, clusterId) async {
   try {
-     var customQueryCredential =
+    if(kDebugMode){
+      print("sending request to download stuff");
+    }
+    var customQueryCredential =
         "SELECT userName, userPassword FROM user WHERE loginStatus = 1;";
     var params = [];
 
@@ -157,7 +160,7 @@ Future<void> getAllSchoolsAndTeachers(districtId, clusterId)async{
         'clusterId': clusterId
       };
       var response = await http.post(
-        Uri.parse('$baseURL'),
+        Uri.parse('$baseURL$fetchAllSchoolsAndTeachers'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -170,14 +173,16 @@ Future<void> getAllSchoolsAndTeachers(districtId, clusterId)async{
 
           if (resp['message'] != null && resp['message'] == 'success') {
             if (resp['data'] != null && resp['data'].isNotEmpty) {
-              
+              if (kDebugMode) {
+                log(resp['data'].toString());
+              }
             }
           }
         }
       }
     }
   } catch (e) {
-    if(kDebugMode){
+    if (kDebugMode) {
       log(e.toString());
     }
   }

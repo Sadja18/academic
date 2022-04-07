@@ -20,7 +20,8 @@ class AcademicDownloadBase extends StatefulWidget {
 class _AcademicDownloadBaseState extends State<AcademicDownloadBase> {
   int initiate = 0;
   var _districtsData = [];
-  var _clusterData = [];
+
+  int hasDistricts = 0;
 
   Map<String, dynamic> selectedDistrict = {};
   Map<String, dynamic> selectedCluster = {};
@@ -28,17 +29,18 @@ class _AcademicDownloadBaseState extends State<AcademicDownloadBase> {
   void onInitiated() async {
     var result = await fetchDistrictsFromRemote();
 
-    setState(() {
-      initiate = 1;
-      _districtsData = result;
-    });
-  }
-
-  void fetchClusters() async {
-    var clusters = await fetchClustersInDistrict(selectedDistrict['id']);
-    setState(() {
-      _clusterData = clusters;
-    });
+    if (result != null) {
+      if (result.isNotEmpty) {
+        setState(() {
+          initiate = 1;
+          hasDistricts = 1;
+          _districtsData = result;
+        });
+      } else {
+        hasDistricts = 0;
+        _districtsData = [];
+      }
+    }
   }
 
   void districtSelector(Map<String, dynamic>? selection) {
@@ -47,8 +49,8 @@ class _AcademicDownloadBaseState extends State<AcademicDownloadBase> {
     }
     setState(() {
       selectedDistrict = selection!;
+      selectedCluster = {};
     });
-    fetchClusters();
   }
 
   void clusterSelector(Map<String, dynamic>? selection) {
@@ -71,177 +73,187 @@ class _AcademicDownloadBaseState extends State<AcademicDownloadBase> {
         border: Border.all(),
       ),
       child: (initiate == 1)
-          ? SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        
-                      ),
-                      color: Colors.white70,
-                    ),
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height * 0.14,
-                    margin: const EdgeInsets.symmetric(
-                      vertical: 6.0,
-                      horizontal: 6.0,
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(border: Border.all()),
-                          width: MediaQuery.of(context).size.width * 0.25,
-                          height: MediaQuery.of(context).size.height * 0.14,
-                          child: const Text(
-                            'District',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
+          ? (hasDistricts == 1)
+              ? SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(),
+                          color: Colors.white70,
                         ),
-                        Container(
-                          decoration: BoxDecoration(border: Border.all()),
-                          width: MediaQuery.of(context).size.width * 0.70,
-                          height: MediaQuery.of(context).size.height * 0.14,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              DistrictDropdownSelector(
-                                districts: _districtsData,
-                                districtSelector: districtSelector,
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * 0.14,
+                        margin: const EdgeInsets.symmetric(
+                          vertical: 6.0,
+                          horizontal: 6.0,
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(border: Border.all()),
+                              width: MediaQuery.of(context).size.width * 0.25,
+                              height: MediaQuery.of(context).size.height * 0.14,
+                              child: const Text(
+                                'District',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
                               ),
-                              (selectedDistrict.isNotEmpty)
-                                  ? Container(
-                                      decoration: BoxDecoration(
-                                        border: Border.all(),
-                                      ),
-                                      padding: const EdgeInsets.all(
-                                        6.0,
-                                      ),
-                                      child: Text(
-                                        selectedDistrict['name'],
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    )
-                                  : const Text(""),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  (selectedDistrict.isNotEmpty)
-                      ? Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                             
                             ),
-                            color: Colors.white70,
-                          ),
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height * 0.14,
-                          margin: const EdgeInsets.symmetric(
-                            vertical: 6.0,
-                            horizontal: 6.0,
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(border: Border.all()),
-                                width: MediaQuery.of(context).size.width * 0.25,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.14,
+                            Container(
+                              decoration: BoxDecoration(border: Border.all()),
+                              width: MediaQuery.of(context).size.width * 0.70,
+                              height: MediaQuery.of(context).size.height * 0.14,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  DistrictDropdownSelector(
+                                    districts: _districtsData,
+                                    districtSelector: districtSelector,
+                                  ),
+                                  (selectedDistrict.isNotEmpty)
+                                      ? Container(
+                                          decoration: BoxDecoration(
+                                            border: Border.all(),
+                                          ),
+                                          padding: const EdgeInsets.all(
+                                            6.0,
+                                          ),
+                                          child: Text(
+                                            selectedDistrict['name'],
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        )
+                                      : const Text(""),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      (selectedDistrict.isNotEmpty)
+                          ? Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(),
+                                color: Colors.white70,
+                              ),
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height * 0.14,
+                              margin: const EdgeInsets.symmetric(
+                                vertical: 6.0,
+                                horizontal: 6.0,
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    alignment: Alignment.center,
+                                    decoration:
+                                        BoxDecoration(border: Border.all()),
+                                    width: MediaQuery.of(context).size.width *
+                                        0.25,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.14,
+                                    child: const Text(
+                                      'Cluster',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    decoration:
+                                        BoxDecoration(border: Border.all()),
+                                    width: MediaQuery.of(context).size.width *
+                                        0.70,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.14,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          child: ClusterDropdown(
+                                            districtId: selectedDistrict['id'],
+                                            clusterSelector: clusterSelector,
+                                            districtName:
+                                                selectedDistrict['name'],
+                                          ),
+                                        ),
+                                        (selectedCluster.isNotEmpty)
+                                            ? Container(
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(),
+                                                ),
+                                                padding: const EdgeInsets.all(
+                                                  6.0,
+                                                ),
+                                                child: Text(
+                                                  selectedCluster['name'],
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16,
+                                                  ),
+                                                ),
+                                              )
+                                            : const Text(""),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            )
+                          : const Text(""),
+                      (selectedCluster.isNotEmpty &&
+                              selectedDistrict.isNotEmpty)
+                          ? Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6.0),
+                                gradient: const LinearGradient(
+                                  begin: Alignment(-0.95, 0.0),
+                                  end: Alignment(1.0, 0.0),
+                                  colors: [
+                                    Color(0xfff21bce),
+                                    Color(0xff826cf0),
+                                  ],
+                                  stops: [0.0, 1.0],
+                                ),
+                              ),
+                              width: MediaQuery.of(context).size.width * 0.40,
+                              height: MediaQuery.of(context).size.height * 0.05,
+                              margin: const EdgeInsets.symmetric(
+                                vertical: 6.0,
+                                horizontal: 6.0,
+                              ),
+                              child: TextButton(
+                                onPressed: () {
+                                  getAllSchoolsAndTeachers(
+                                      selectedDistrict['id'],
+                                      selectedCluster['id']);
+                                },
                                 child: const Text(
-                                  'Cluster',
+                                  'Download',
                                   style: TextStyle(
+                                    color: Colors.white,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 18,
                                   ),
                                 ),
                               ),
-                              Container(
-                                decoration: BoxDecoration(border: Border.all()),
-                                width: MediaQuery.of(context).size.width * 0.70,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.14,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      child: ClusterDropdown(
-                                        clusters: _clusterData,
-                                        clusterSelector: clusterSelector,
-                                      ),
-                                    ),
-                                    (selectedCluster.isNotEmpty)
-                                        ? Container(
-                                            decoration: BoxDecoration(
-                                              border: Border.all(),
-                                            ),
-                                            padding: const EdgeInsets.all(
-                                              6.0,
-                                            ),
-                                            child: Text(
-                                              selectedCluster['name'],
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                              ),
-                                            ),
-                                          )
-                                        : const Text(""),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : const Text(""),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6.0),
-                      gradient: const LinearGradient(
-                        begin: Alignment(-0.95, 0.0),
-                        end: Alignment(1.0, 0.0),
-                        colors: [
-                          Color(0xfff21bce),
-                          Color(0xff826cf0),
-                        ],
-                        stops: [0.0, 1.0],
-                      ),
-                    ),
-                    width: MediaQuery.of(context).size.width * 0.40,
-                    height: MediaQuery.of(context).size.height * 0.05,
-                    margin: const EdgeInsets.symmetric(
-                      vertical: 6.0,
-                      horizontal: 6.0,
-                    ),
-                    child: TextButton(
-                      onPressed: () {
-                        getAllSchoolsAndTeachers(selectedDistrict['id'], selectedCluster['id']);
-                      },
-                      child: const Text(
-                        'Download',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
-                    ),
+                            )
+                          : const Text(""),
+                    ],
                   ),
-                ],
-              ),
-            )
+                )
+              : const Text("No Districts found")
           : Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(6.0),
