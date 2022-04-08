@@ -23,6 +23,7 @@ class ClusterDropdown extends StatefulWidget {
 class _ClusterDropdownState extends State<ClusterDropdown> {
   Widget dropdownWidget(_clusters) {
     return DropdownButton(
+      hint: const Text("Select Cluster"),
       items: _clusters.map<DropdownMenuItem<String>>((e) {
         return DropdownMenuItem(
           child: Container(

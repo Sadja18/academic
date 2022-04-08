@@ -19,6 +19,7 @@ class DistrictDropdownSelector extends StatefulWidget {
 class _DistrictDropdownSelectorState extends State<DistrictDropdownSelector> {
   List<dynamic> _districts = [];
   Map<String, dynamic> selectedDistrict = {};
+  String value = "{}";
   @override
   void initState() {
     setState(() {
@@ -29,8 +30,10 @@ class _DistrictDropdownSelectorState extends State<DistrictDropdownSelector> {
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
       child: DropdownButton(
+        hint: const Text('Select District'),
         items: _districts.map<DropdownMenuItem<String>>((e) {
           return DropdownMenuItem(
             child: Container(
