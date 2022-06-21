@@ -16,67 +16,42 @@ import 'package:http/http.dart' as http;
 import '../models/uri_paths.dart';
 import '../services/login_format_validator.dart';
 
-Future<dynamic> onlineLoginAttempt(String userName, String userPassword) async {
-  try {
-    if (userName.isNotEmpty &&
-        userName != "" &&
-        userPassword.isNotEmpty &&
-        userPassword != "") {
-      // check if the user name is of the valid email format
-      var format = loginCredentialsValidation(userName, userPassword);
+// Future<dynamic> onlineLoginAttempt(String userName, String userPassword) async {
+//   try {
+//     if (userName.isNotEmpty &&
+//         userName != "" &&
+//         userPassword.isNotEmpty &&
+//         userPassword != "") {
+//       // check if the user name is of the valid email format
 
-      if (format == "valid") {
-        // if user name is email
-        // send http request to try to login
-        Map<String, String> requestBody = {
-          "userName": userName,
-          "userPassword": userPassword,
-        };
+//         if (kDebugMode) {
+//           print(response.body.toString());
+//           print(response.statusCode.toString());
+//         }
 
-        var response = await http.post(
-          Uri.parse('$baseURL$login'),
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
-          },
-          body: jsonEncode(requestBody),
-        );
+//         if (response.statusCode == 200) {
+//           var respBody = jsonDecode(response.body);
 
-        if (kDebugMode) {
-          print(response.body.toString());
-          print(response.statusCode.toString());
-        }
-
-        if (response.statusCode == 200) {
-          var respBody = jsonDecode(response.body);
-
-          return respBody;
-        } else {
-          return {};
-        }
-      } else {
-        return {};
-      }
-    } else {
-      return {};
-    }
-  } catch (e) {
-    if (kDebugMode) {
-      log(e.toString());
-    }
-    // return {};
-  }
-}
+//           return respBody;
+//         } else {
+//           return {};
+//         }
+//       } else {
+//         return {};
+//       }
+//     } else {
+//       return {};
+//     }
+//   } catch (e) {
+//     if (kDebugMode) {
+//       log(e.toString());
+//     }
+//     // return {};
+//   }
+// }
 
 Future<void> insertNewUser(Map<String, dynamic> data) async {
   try {
-    int academicUserGroup = 0;
-    if (data['academicUserGroup']) {
-      academicUserGroup = 1;
-    }
-    data['academicUserGroup'] = academicUserGroup;
-    data['loginStatus'] = 1;
-    data['isOnline'] = 1;
-
     await DBProvider.db.dynamicInsert('user', data);
   } catch (e) {
     if (kDebugMode) {

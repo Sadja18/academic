@@ -24,7 +24,25 @@ class _AcademicDownloadBaseState extends State<AcademicDownloadBase> {
   int hasDistricts = 0;
 
   Map<String, dynamic> selectedDistrict = {};
+  Map<String, dynamic> prevDistrict = {};
+
   Map<String, dynamic> selectedCluster = {};
+
+  int selectDistrict = 0;
+  int selectCluster = 0;
+
+  void showDistrictSelector() {
+    setState(() {
+      selectDistrict = (selectDistrict == 1) ? 0 : 1;
+      // selectedDistrict = (selectDistrict==0) {};
+    });
+  }
+
+  void showClusterSelector() {
+    setState(() {
+      selectCluster = selectCluster == 1 ? 0 : 1;
+    });
+  }
 
   void onInitiated() async {
     var result = await fetchDistrictsFromRemote();
@@ -45,9 +63,11 @@ class _AcademicDownloadBaseState extends State<AcademicDownloadBase> {
 
   void districtSelector(Map<String, dynamic>? selection) {
     if (kDebugMode) {
+      print("Selection ov er");
       print(selection.toString());
     }
     setState(() {
+      prevDistrict = selectedDistrict;
       selectedDistrict = selection!;
       selectedCluster = {};
     });
@@ -101,191 +121,15 @@ class _AcademicDownloadBaseState extends State<AcademicDownloadBase> {
       alignment: Alignment.topCenter,
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
+      // padding: const EdgeInsets.symmetric(
+      //   vertical: 6.0,
+      // ),
       decoration: BoxDecoration(
         color: Colors.amber.shade50,
-        border: Border.all(),
+        // border: Border.all(),
       ),
-      child: (initiate == 1)
-          ? (hasDistricts == 1)
-              ? SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(),
-                          color: Colors.white70,
-                        ),
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height * 0.14,
-                        margin: const EdgeInsets.symmetric(
-                          vertical: 6.0,
-                          horizontal: 6.0,
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(border: Border.all()),
-                              width: MediaQuery.of(context).size.width * 0.25,
-                              height: MediaQuery.of(context).size.height * 0.14,
-                              child: const Text(
-                                'District',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              decoration: BoxDecoration(border: Border.all()),
-                              width: MediaQuery.of(context).size.width * 0.70,
-                              height: MediaQuery.of(context).size.height * 0.14,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  DistrictDropdownSelector(
-                                    districts: _districtsData,
-                                    districtSelector: districtSelector,
-                                  ),
-                                  (selectedDistrict.isNotEmpty)
-                                      ? Container(
-                                          decoration: BoxDecoration(
-                                            border: Border.all(),
-                                          ),
-                                          padding: const EdgeInsets.all(
-                                            6.0,
-                                          ),
-                                          child: Text(
-                                            selectedDistrict['name'],
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                        )
-                                      : const Text(""),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      (selectedDistrict.isNotEmpty)
-                          ? Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(),
-                                color: Colors.white70,
-                              ),
-                              width: MediaQuery.of(context).size.width,
-                              height: MediaQuery.of(context).size.height * 0.14,
-                              margin: const EdgeInsets.symmetric(
-                                vertical: 6.0,
-                                horizontal: 6.0,
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    alignment: Alignment.center,
-                                    decoration:
-                                        BoxDecoration(border: Border.all()),
-                                    width: MediaQuery.of(context).size.width *
-                                        0.25,
-                                    height: MediaQuery.of(context).size.height *
-                                        0.14,
-                                    child: const Text(
-                                      'Cluster',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    decoration:
-                                        BoxDecoration(border: Border.all()),
-                                    width: MediaQuery.of(context).size.width *
-                                        0.70,
-                                    height: MediaQuery.of(context).size.height *
-                                        0.14,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          child: ClusterDropdown(
-                                            districtId: selectedDistrict['id'],
-                                            clusterSelector: clusterSelector,
-                                            districtName:
-                                                selectedDistrict['name'],
-                                          ),
-                                        ),
-                                        (selectedCluster.isNotEmpty)
-                                            ? Container(
-                                                decoration: BoxDecoration(
-                                                  border: Border.all(),
-                                                ),
-                                                padding: const EdgeInsets.all(
-                                                  6.0,
-                                                ),
-                                                child: Text(
-                                                  selectedCluster['name'],
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 16,
-                                                  ),
-                                                ),
-                                              )
-                                            : const Text(""),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                            )
-                          : const Text(""),
-                      (selectedCluster.isNotEmpty &&
-                              selectedDistrict.isNotEmpty)
-                          ? Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(6.0),
-                                gradient: const LinearGradient(
-                                  begin: Alignment(-0.95, 0.0),
-                                  end: Alignment(1.0, 0.0),
-                                  colors: [
-                                    Color(0xfff21bce),
-                                    Color(0xff826cf0),
-                                  ],
-                                  stops: [0.0, 1.0],
-                                ),
-                              ),
-                              width: MediaQuery.of(context).size.width * 0.40,
-                              height: MediaQuery.of(context).size.height * 0.05,
-                              margin: const EdgeInsets.symmetric(
-                                vertical: 6.0,
-                                horizontal: 6.0,
-                              ),
-                              child: TextButton(
-                                onPressed: () {
-                                  downloadButtonOnclick();
-                                },
-                                child: const Text(
-                                  'Download',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ),
-                            )
-                          : const Text(""),
-                    ],
-                  ),
-                )
-              : const Text("No Districts found")
-          : Container(
+      child: (initiate == 0)
+          ? Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(6.0),
                 gradient: const LinearGradient(
@@ -317,7 +161,337 @@ class _AcademicDownloadBaseState extends State<AcademicDownloadBase> {
                   ),
                 ),
               ),
-            ),
+            )
+          : (hasDistricts == 0)
+              ? const Text("No Districts found")
+              : SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
+                        // alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          border: Border.all(),
+                          // color: Colors.red,
+                        ),
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * 0.75,
+                        margin: const EdgeInsets.symmetric(
+                          vertical: 3.0,
+                          horizontal: 6.0,
+                        ),
+                        child: Column(
+                          // mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(
+                                  8.0,
+                                ),
+                                gradient: const LinearGradient(
+                                  begin: Alignment(-0.95, 0.0),
+                                  end: Alignment(1.0, 0.0),
+                                  colors: [
+                                    Color.fromARGB(255, 245, 142, 228),
+                                    Color.fromARGB(255, 157, 141, 236),
+                                  ],
+                                  stops: [0.0, 1.0],
+                                ),
+                              ),
+                              margin: const EdgeInsets.only(
+                                top: 6.0,
+                                bottom: 3.0,
+                              ),
+                              child: TextButton(
+                                style: TextButton.styleFrom(
+                                  alignment: Alignment.center,
+                                  primary: Colors.transparent,
+                                ),
+                                onPressed: () {
+                                  showDistrictSelector();
+                                },
+                                child: Text(
+                                  (selectDistrict == 0)
+                                      ? "Show District Selector"
+                                      : "Close District Selector",
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            (selectDistrict == 0)
+                                ? const Text("")
+                                : DistrictRadioSelector(
+                                    districts: _districtsData,
+                                    districtSelector: districtSelector),
+                            (selectDistrict == 0 && selectedDistrict.isNotEmpty)
+                                ? Container(
+                                    alignment: Alignment.topCenter,
+                                    margin: const EdgeInsets.only(
+                                      bottom: 3.0,
+                                    ),
+                                    decoration: const BoxDecoration(
+                                        // border: Border.all(
+                                        // color: Colors.green,
+                                        // ),
+                                        // color: Colors.white,
+                                        ),
+                                    width: MediaQuery.of(context).size.width,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.55,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          decoration: const BoxDecoration(
+                                            color: Colors.white,
+                                          ),
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.07,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(),
+                                                ),
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.30,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.15,
+                                                child: const Text(
+                                                  "Selected District",
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                              Container(
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(),
+                                                ),
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.60,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.15,
+                                                child: Text(
+                                                    selectedDistrict['name']),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+
+                                        // widget for cluster radio
+                                        (selectedDistrict.isEmpty)
+                                            ? const Text(
+                                                'No clusters in this district')
+                                            : Container(
+                                                margin: const EdgeInsets.only(
+                                                  top: 8.0,
+                                                  bottom: 8.0,
+                                                ),
+                                                child: Column(
+                                                  children: [
+                                                    Container(
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                          8.0,
+                                                        ),
+                                                        gradient:
+                                                            const LinearGradient(
+                                                          begin: Alignment(
+                                                              -0.95, 0.0),
+                                                          end: Alignment(
+                                                              1.0, 0.0),
+                                                          colors: [
+                                                            Color.fromARGB(255,
+                                                                245, 142, 228),
+                                                            Color.fromARGB(255,
+                                                                157, 141, 236),
+                                                          ],
+                                                          stops: [0.0, 1.0],
+                                                        ),
+                                                      ),
+                                                      margin:
+                                                          const EdgeInsets.only(
+                                                        bottom: 8.0,
+                                                      ),
+                                                      child: TextButton(
+                                                        onPressed: () {
+                                                          showClusterSelector();
+                                                        },
+                                                        child: Text(
+                                                          (selectCluster == 1)
+                                                              ? "Close Cluster Selector"
+                                                              : "Show Cluster Selector",
+                                                          style:
+                                                              const TextStyle(
+                                                            // fontWeight:
+                                                            // FontWeight.bold,
+                                                            color: Colors.black,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    (selectCluster == 1)
+                                                        ? Container(
+                                                            decoration:
+                                                                const BoxDecoration(
+                                                                    color: Colors
+                                                                        .blue),
+                                                            width:
+                                                                MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width,
+                                                            height: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .height *
+                                                                0.30,
+                                                            child:
+                                                                ClusterRadioSelector(
+                                                              districtId:
+                                                                  selectedDistrict[
+                                                                      'id'],
+                                                              districtName:
+                                                                  selectedDistrict[
+                                                                      'name'],
+                                                              clusterSelector:
+                                                                  clusterSelector,
+                                                            ),
+                                                          )
+                                                        : const Text(""),
+                                                    (selectCluster == 0 &&
+                                                            selectedCluster
+                                                                .isNotEmpty)
+                                                        ? Container(
+                                                            decoration:
+                                                                const BoxDecoration(
+                                                                    color: Colors
+                                                                        .white),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                Container(
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .center,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    border: Border
+                                                                        .all(),
+                                                                  ),
+                                                                  width: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width *
+                                                                      0.30,
+                                                                  height: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .height *
+                                                                      0.08,
+                                                                  child:
+                                                                      const Text(
+                                                                    "Selected Cluster",
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                Container(
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .center,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    border: Border
+                                                                        .all(),
+                                                                  ),
+                                                                  width: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width *
+                                                                      0.60,
+                                                                  height: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .height *
+                                                                      0.08,
+                                                                  child: Text(
+                                                                      selectedCluster[
+                                                                          'name']),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          )
+                                                        : const Text(""),
+                                                  ],
+                                                ),
+                                              ),
+                                      ],
+                                    ),
+                                  )
+                                : const Text(''),
+                            (selectedCluster.isEmpty ||
+                                    selectedDistrict.isEmpty)
+                                ? const Text("")
+                                : Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6.0),
+                                      gradient: const LinearGradient(
+                                        begin: Alignment(-0.95, 0.0),
+                                        end: Alignment(1.0, 0.0),
+                                        colors: [
+                                          Color(0xfff21bce),
+                                          Color(0xff826cf0),
+                                        ],
+                                        stops: [0.0, 1.0],
+                                      ),
+                                    ),
+                                    child: TextButton(
+                                      onPressed: () {},
+                                      child: const Text(
+                                        "Download",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
     );
   }
 }

@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
@@ -305,6 +307,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     child: OutlinedButton(
                       onPressed: () {
                         // wrapper();
+                        if (kDebugMode) {
+                          log("Fetch data");
+                        }
                       },
                       child: const Text('Fetch Data'),
                     ),
@@ -315,6 +320,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     child: OutlinedButton(
                       onPressed: () {
                         // wrapper();
+                        if (kDebugMode) {
+                          log("Upload data");
+                        }
                       },
                       child: const Text('Sync Data'),
                     ),
@@ -324,7 +332,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   title: Center(
                     child: OutlinedButton(
                       onPressed: () {
-                        // _onLogout();
                         logOutButtonOnClick();
                       },
                       child: const Text('Logout'),
@@ -340,6 +347,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           children: [
             Container(
               alignment: Alignment.topCenter,
+              width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
                 border: Border.all(),
               ),

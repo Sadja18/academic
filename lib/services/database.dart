@@ -26,34 +26,51 @@ class DBProvider {
         'UNIQUE(sessionId)'
         ');';
   }
-  String _createSchoolTable(){
-    return "CREATE  TABLE School("
-    "schoolId INTEGER NOT NULL,"
-    "schoolName TEXT NOT NULL,"
-    "schoolCode TEXT,"
-    "schoolClusterId INTEGER,"
-    "schoolClusterName TEXT,"
-    "schoolBlockId INTEGER,"
-    "schoolBlockName TEXT,"
-    "UNIQUE(schoolId)"
-    ");";
+
+  String _createInspectionScheduled() {
+    return "CREATE TABLE InspectionScheduled("
+        "inspectionScheduleId INTEGER PRIMARY KEY,"
+        "inspectionScheduleName TEXT,"
+        "inspectionScheduleDisplayName TEXT,"
+        "inspectionScheduleDate TEXT,"
+        "inspectionScheduleAcademicYear TEXT,"
+        "inspectionScheduleRoundNo TEXT,"
+        "inspectionScheduleSchoolIds TEXT,"
+        ");";
   }
 
-  String _createTeacherTable(){
+  String _createInspectionDetails() {
+    return "CREATE TABLE InspectionDetails("
+        "inspectionDetailId INTEGER PRIMARY KEY,"
+        "inspectionScheduleId INTEGER NOT NULL,"
+        "inspectionDetailBlockId INTEGER NOT NULL,"
+        "inspectionDetailBlockName TEXT,"
+        "inspectionDetailClusterId INTEGER NOT NULL,"
+        "inspectionDetailClusterName TEXT,"
+        "inspectionDetailVillageId INTEGER,"
+        "inspectionDetailVillageName TEXT,"
+        "inspectionDetailSchoolId INTEGER,"
+        "inspectionDetailSchoolName TEXT,"
+        "inspectionDetailAssignedOfficerId INTEGER,"
+        "inspectionDetailAssignedOfficerName TEXT,"
+        ");";
+  }
+
+  String _createTeacherTable() {
     return "CREATE TABLE Teacher("
-    "teacherId INTEGER NOT NULL,"
-    "teacherName TEXT NOT NULL,"
-    "employeeId TEXT NOT NULL,"
-    "standardId TEXT,"
-    "standardName TEXT,"
-    "schoolId INTEGER NOT NULL,"
-    "schoolName TEXT NOT NULL,"
-    "teacherClusterId INTEGER NOT NULL,"
-    "teacherClusterName INTEGER NOT NULL,"
-    "teacherBlockId INTEGER NOT NULL,"
-    "teacherBlockName INTEGER NOT NULL,"
-    "UNIQUE(teacherId)"
-    ");";
+        "teacherId INTEGER NOT NULL,"
+        "teacherName TEXT NOT NULL,"
+        "employeeId TEXT NOT NULL,"
+        "standardId TEXT,"
+        "standardName TEXT,"
+        "schoolId INTEGER NOT NULL,"
+        "schoolName TEXT NOT NULL,"
+        "teacherClusterId INTEGER NOT NULL,"
+        "teacherClusterName INTEGER NOT NULL,"
+        "teacherBlockId INTEGER NOT NULL,"
+        "teacherBlockName INTEGER NOT NULL,"
+        "UNIQUE(teacherId)"
+        ");";
   }
 
   Future initDB() async {
@@ -74,7 +91,8 @@ class DBProvider {
           ');');
 
       batch.execute(_createAcademicSessionTable());
-      batch.execute(_createSchoolTable());
+      batch.execute(_createInspectionScheduled());
+      batch.execute(_createInspectionDetails());
       batch.execute(_createTeacherTable());
 
       await batch.commit(noResult: true);
